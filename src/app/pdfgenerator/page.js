@@ -1,41 +1,140 @@
-'use client'
-import React from 'react';
+'use client';
+import React, { useEffect } from 'react';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const PdfGenerator = () => {
+const PdfGenerator = ({form}) => {
+	 
+
+
+
 	const generatePdf = () => {
 		const docDefinition = {
 			content: [
+				{ text: 'Film Production Call Sheet', style: 'header' },
+				'\n\n',
 				{
 					table: {
-						headerRows: 2,
-						widths: ['*', '*', '*'],
+						widths: ['33%', '33%', '33%'],
 						body: [
 							[
-								{ text: 'Block 1', rowSpan: 8 },
-								{ text: 'Block 2', rowSpan: 4 },
-								'Row 1 of Column 3',
+								{
+									table: {
+										widths: ['*', '*'],
+										body: [
+											['Production:', form.production],
+											['Director:', form.director],
+											['Producer:', form.producer],
+											['Date:', form.date],
+											['Location:', form.location],
+										],
+									},
+									layout: {
+										hLineWidth: () => 0,
+										vLineWidth: () => 0,
+									},
+								},
+								{
+									table: {
+										widths: ['*'],
+										body: [
+											[{ text: `Title: ${form.projectTitle}`, style: 'subheader' }],
+											[
+												{
+													text: `General Call: ${form.generalCall}`,
+													style: 'subheader',
+												},
+											],
+										],
+									},
+									layout: {
+										hLineWidth: () => 0,
+										vLineWidth: () => 0,
+									},
+								},
+								{
+									table: {
+										widths: ['*', '*'],
+										body: [
+											['Detailed Title:', form.detailedTitle],
+											['Date:', form.date],
+											['Call Time:', form.callTime],
+											['Lunch Time:', form.lunchTime],
+											['Weather:', form.weather],
+											['Sunrise:', form.sunrise],
+											['Sunset:', form.sunset],
+										],
+									},
+									layout: {
+										hLineWidth: () => 0,
+										vLineWidth: () => 0,
+									},
+								},
 							],
-							[, '', 'Row 2 of Column 3'],
-							['', '', 'Row 3 of Column 3'],
-							['', '', 'Row 4 of Column 3'],
-							['', '', 'Row 5 of Column 3'],
-							['', '', 'Row 6 of Column 3'],
-							['', '', 'Row 7 of Column 3'],
-							['', '', 'Row 8 of Column 3'],
+						],
+					},
+				},
+				'\n\n',
+				// Call Times
+				{
+					table: {
+						widths: ['*', '*', '*'],
+						body: [
+							['Role', 'Name', 'Call Time'],
+							['Director', 'Your Director', '6:00 AM'],
+							['Actor 1', 'Actor 1', '7:00 AM'],
+							['Actor 2', 'Actor 2', '7:30 AM'],
+							// More roles and call times here
+						],
+					},
+				},
+
+				'\n\n',
+
+				// Scene Information
+				{
+					table: {
+						widths: ['*', '*', '*', '*'],
+						body: [
+							['Scene', 'Page Numbers', 'Cast Numbers', 'Location'],
+							// More scenes here
+							['Scene 1', '1-5', '1,2,3', 'Location 1'],
+							[
+								{
+									colSpan: 4,
+									table: {
+										widths: ['*', '*', '*'],
+										body: [['Scene Details', 'Page Numbers', 'Cast Numbers']],
+									},
+								},
+								{},
+								{},
+								{},
+							],
+							['Additional Information', {}, {}, {}],
 						],
 					},
 				},
 			],
+			styles: {
+				header: {
+					fontSize: 18,
+					bold: true,
+				},
+			},
 		};
-
 		pdfMake.createPdf(docDefinition).open();
 	};
-
-	return <button onClick={generatePdf}>Generate PDF</button>;
+	
+	useEffect(() => {
+			 if (form && Object.keys(form).length !== 0) {
+				 generatePdf(form);
+			 }
+		 }, [form]);
+	return null;
 };
+
 
 export default PdfGenerator;
